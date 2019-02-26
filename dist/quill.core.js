@@ -2591,7 +2591,18 @@ var Editor = function () {
   }, {
     key: 'getContents',
     value: function getContents(index, length) {
-      return this.delta.slice(index, index + length);
+      var props = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+      var deltaOps = this.delta.slice(index, index + length);
+      if (props) {
+        deltaOps.props = this.getDelta();
+      }
+      return deltaOps;
+    }
+  }, {
+    key: 'getProps',
+    value: function getProps() {
+      return this.delta.props;
     }
   }, {
     key: 'getDelta',
