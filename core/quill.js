@@ -198,7 +198,7 @@ class Quill {
     };
   }
 
-  getContents(index = 0, length = this.getLength() - index, props=false) {
+  getContents(index = 0, length = this.getLength() - index, props=true) {
     [index, length] = overload(index, length);
     return this.editor.getContents(index, length, props);
   }
