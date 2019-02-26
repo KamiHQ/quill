@@ -1323,6 +1323,7 @@ var Quill = function () {
     value: function getContents() {
       var index = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
       var length = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.getLength() - index;
+      var props = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
       var _overload7 = overload(index, length);
 
@@ -1331,7 +1332,7 @@ var Quill = function () {
       index = _overload8[0];
       length = _overload8[1];
 
-      return this.editor.getContents(index, length);
+      return this.editor.getContents(index, length, props);
     }
   }, {
     key: 'getFormat',
