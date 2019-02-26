@@ -106,7 +106,7 @@ class Editor {
   getContents(index, length, props=false) {
     let deltaOps = this.delta.slice(index, index + length);
     if(props) {
-      deltaOps.props = this.getDelta();
+      deltaOps.props = this.getProps();
     }
     return deltaOps;
   }

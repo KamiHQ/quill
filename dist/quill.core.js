@@ -2596,7 +2596,7 @@ var Editor = function () {
 
       var deltaOps = this.delta.slice(index, index + length);
       if (props) {
-        deltaOps.props = this.getDelta();
+        deltaOps.props = this.getProps();
       }
       return deltaOps;
     }
