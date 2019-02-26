@@ -200,6 +200,7 @@ class Editor {
 
   update(change, mutations = [], cursorIndex = undefined) {
     let oldDelta = this.delta;
+    let oldProps = this.getProps();
     if (mutations.length === 1 &&
         mutations[0].type === 'characterData' &&
         mutations[0].target.data.match(ASCII) &&
@@ -226,6 +227,8 @@ class Editor {
         change = oldDelta.diff(this.delta, cursorIndex);
       }
     }
+    // Maintain the props
+    this.delta.setProps(oldProps);
     return change;
   }
 }
