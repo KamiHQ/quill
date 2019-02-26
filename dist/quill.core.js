@@ -2717,6 +2717,7 @@ var Editor = function () {
       var cursorIndex = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
 
       var oldDelta = this.delta;
+      var oldProps = this.getProps();
       if (mutations.length === 1 && mutations[0].type === 'characterData' && mutations[0].target.data.match(ASCII) && _parchment2.default.find(mutations[0].target)) {
         // Optimization for character changes
         var textBlot = _parchment2.default.find(mutations[0].target);
@@ -2740,6 +2741,8 @@ var Editor = function () {
           change = oldDelta.diff(this.delta, cursorIndex);
         }
       }
+      // Maintain the props
+      this.delta.setProps(oldProps);
       return change;
     }
   }]);
