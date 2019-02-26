@@ -103,8 +103,16 @@ class Editor {
     return this.update(new Delta().retain(index).retain(length, clone(formats)));
   }
 
-  getContents(index, length) {
-    return this.delta.slice(index, index + length);
+  getContents(index, length, props=false) {
+    let deltaOps = this.delta.slice(index, index + length);
+    if(props) {
+      deltaOps.props = this.getDelta();
+    }
+    return deltaOps;
+  }
+
+  getProps() {
+    return this.delta.props;
   }
 
   getDelta() {
