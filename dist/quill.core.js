@@ -1500,6 +1500,7 @@ var Quill = function () {
         delta = new _quillDelta2.default(delta);
         var length = _this10.getLength();
         var deleted = _this10.editor.deleteText(0, length);
+        _this10.emitter.emit('prop-change-triggered', delta.props, _this10.editor.getProps(), source);
         var applied = _this10.editor.applyDelta(delta);
         var lastOp = applied.ops[applied.ops.length - 1];
         if (lastOp != null && typeof lastOp.insert === 'string' && lastOp.insert[lastOp.insert.length - 1] === '\n') {
