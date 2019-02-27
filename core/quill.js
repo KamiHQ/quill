@@ -304,6 +304,7 @@ class Quill {
       delta = new Delta(delta);
       let length = this.getLength();
       let deleted = this.editor.deleteText(0, length);
+      this.emitter.emit('prop-change-triggered', delta.props, this.editor.getProps(), source);
       let applied = this.editor.applyDelta(delta);
       let lastOp = applied.ops[applied.ops.length - 1];
       if (lastOp != null && typeof(lastOp.insert) === 'string' && lastOp.insert[lastOp.insert.length-1] === '\n') {
