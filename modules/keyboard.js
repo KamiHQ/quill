@@ -333,19 +333,29 @@ function handleBackspace(range, context) {
   if (range.index === 0 || this.quill.getLength() <= 1) return;
   let [line, ] = this.quill.getLine(range.index);
   let formats = {};
-  if (context.offset === 0) {
-    let [prev, ] = this.quill.getLine(range.index - 1);
-    if (prev != null && prev.length() > 1) {
-      let curFormats = line.formats();
-      let prevFormats = this.quill.getFormat(range.index-1, 1);
-      formats = DeltaOp.attributes.diff(curFormats, prevFormats) || {};
-    }
+  // Check that the current blot is not empty
+  var leaf = this.quill.getLeaf(range.index);
+  var isEmptyLeaf = leaf[1] === 0;
+
+  let [prev, ] = this.quill.getLine(range.index - 1);
+  if (prev != null && prev.length() > 1) {
+    let curFormats = line.formats();
+    let prevFormats = this.quill.getFormat(range.index-1, 1);
+    formats = DeltaOp.attributes.diff(curFormats, prevFormats) || {};
   }
+
   // Check for astral symbols
   let length = /[\uD800-\uDBFF][\uDC00-\uDFFF]$/.test(context.prefix) ? 2 : 1;
+
+  if (isEmptyLeaf) { // Unset the empty format
+    this.quill.getLeaf(range.index)[0].parent.remove();
+  }
   this.quill.deleteText(range.index-length, length, Quill.sources.USER);
-  if (Object.keys(formats).length > 0) {
-    this.quill.formatLine(range.index-length, length, formats, Quill.sources.USER);
+
+  if (!isEmptyLeaf) {
+    for(var key in formats) {
+      this.quill.format(key, formats[key]);
+    }
   }
   this.quill.focus();
 }
