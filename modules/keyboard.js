@@ -354,7 +354,9 @@ function handleBackspace(range, context) {
 
   if (!isEmptyLeaf) {
     for(var key in formats) {
-      this.quill.format(key, formats[key]);
+      if (Object.prototype.hasOwnProperty.call(formats, key)) {
+        this.quill.format(key, formats[key]);
+      }
     }
   }
   this.quill.focus();

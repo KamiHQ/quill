@@ -4511,14 +4511,8 @@ var Keyboard = function (_Module) {
     });
     _this.addBinding({ key: Keyboard.keys.ENTER, shiftKey: null }, handleEnter);
     _this.addBinding({ key: Keyboard.keys.ENTER, metaKey: null, ctrlKey: null, altKey: null }, function () {});
-    if (/Firefox/i.test(navigator.userAgent)) {
-      // Need to handle delete and backspace for Firefox in the general case #1171
-      _this.addBinding({ key: Keyboard.keys.BACKSPACE }, { collapsed: true }, handleBackspace);
-      _this.addBinding({ key: Keyboard.keys.DELETE }, { collapsed: true }, handleDelete);
-    } else {
-      _this.addBinding({ key: Keyboard.keys.BACKSPACE }, { collapsed: true, prefix: /^.?$/ }, handleBackspace);
-      _this.addBinding({ key: Keyboard.keys.DELETE }, { collapsed: true, suffix: /^.?$/ }, handleDelete);
-    }
+    _this.addBinding({ key: Keyboard.keys.BACKSPACE }, { collapsed: true, prefix: /^.?$/ }, handleBackspace);
+    _this.addBinding({ key: Keyboard.keys.DELETE }, { collapsed: true, suffix: /^.?$/ }, handleDelete);
     _this.addBinding({ key: Keyboard.keys.BACKSPACE }, { collapsed: false }, handleDeleteRange);
     _this.addBinding({ key: Keyboard.keys.DELETE }, { collapsed: false }, handleDeleteRange);
     _this.addBinding({ key: Keyboard.keys.BACKSPACE, altKey: null, ctrlKey: null, metaKey: null, shiftKey: null }, { collapsed: true, offset: 0 }, handleBackspace);
@@ -4844,22 +4838,35 @@ function handleBackspace(range, context) {
       line = _quill$getLine12[0];
 
   var formats = {};
-  if (context.offset === 0) {
-    var _quill$getLine13 = this.quill.getLine(range.index - 1),
-        _quill$getLine14 = _slicedToArray(_quill$getLine13, 1),
-        prev = _quill$getLine14[0];
+  // Check that the current blot is not empty
+  var leaf = this.quill.getLeaf(range.index);
+  var isEmptyLeaf = leaf[1] === 0;
 
-    if (prev != null && prev.length() > 1) {
-      var curFormats = line.formats();
-      var prevFormats = this.quill.getFormat(range.index - 1, 1);
-      formats = _op2.default.attributes.diff(curFormats, prevFormats) || {};
-    }
+  var _quill$getLine13 = this.quill.getLine(range.index - 1),
+      _quill$getLine14 = _slicedToArray(_quill$getLine13, 1),
+      prev = _quill$getLine14[0];
+
+  if (prev != null && prev.length() > 1) {
+    var curFormats = line.formats();
+    var prevFormats = this.quill.getFormat(range.index - 1, 1);
+    formats = _op2.default.attributes.diff(curFormats, prevFormats) || {};
   }
+
   // Check for astral symbols
   var length = /[\uD800-\uDBFF][\uDC00-\uDFFF]$/.test(context.prefix) ? 2 : 1;
+
+  if (isEmptyLeaf) {
+    // Unset the empty format
+    this.quill.getLeaf(range.index)[0].parent.remove();
+  }
   this.quill.deleteText(range.index - length, length, _quill2.default.sources.USER);
-  if (Object.keys(formats).length > 0) {
-    this.quill.formatLine(range.index - length, length, formats, _quill2.default.sources.USER);
+
+  if (!isEmptyLeaf) {
+    for (var key in formats) {
+      if (Object.prototype.hasOwnProperty.call(formats, key)) {
+        this.quill.format(key, formats[key]);
+      }
+    }
   }
   this.quill.focus();
 }
