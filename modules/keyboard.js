@@ -349,6 +349,7 @@ function handleBackspace(range, context) {
 
   if (isEmptyLeaf) { // Unset the empty format
     this.quill.getLeaf(range.index)[0].parent.remove();
+    this.quill.setSelection(range.index);
   }
   this.quill.deleteText(range.index-length, length, Quill.sources.USER);
 
