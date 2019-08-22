@@ -4840,7 +4840,7 @@ function handleBackspace(range, context) {
   var formats = {};
   // Check that the current blot is not empty
   var leaf = this.quill.getLeaf(range.index);
-  var isEmptyLeaf = leaf[1] === 0;
+  var isEmptyLeaf = leaf[1] === 0 && leaf[0].constructor.name === "Cursor";
 
   var _quill$getLine13 = this.quill.getLine(range.index - 1),
       _quill$getLine14 = _slicedToArray(_quill$getLine13, 1),
@@ -4858,6 +4858,7 @@ function handleBackspace(range, context) {
   if (isEmptyLeaf) {
     // Unset the empty format
     this.quill.getLeaf(range.index)[0].parent.remove();
+    this.quill.setSelection(range.index);
   }
   this.quill.deleteText(range.index - length, length, _quill2.default.sources.USER);
 
@@ -4875,28 +4876,36 @@ function handleDelete(range, context) {
   // Check for astral symbols
   var length = /^[\uD800-\uDBFF][\uDC00-\uDFFF]/.test(context.suffix) ? 2 : 1;
   if (range.index >= this.quill.getLength() - length) return;
-  var formats = {},
-      nextLength = 0;
+  var formats = {};
+  // Check that the current blot is not empty
+  var leaf = this.quill.getLeaf(range.index);
+  var isEmptyLeaf = leaf[1] === 0 && leaf[0].constructor.name === "Cursor";
 
   var _quill$getLine15 = this.quill.getLine(range.index),
       _quill$getLine16 = _slicedToArray(_quill$getLine15, 1),
       line = _quill$getLine16[0];
 
-  if (context.offset >= line.length() - 1) {
-    var _quill$getLine17 = this.quill.getLine(range.index + 1),
-        _quill$getLine18 = _slicedToArray(_quill$getLine17, 1),
-        next = _quill$getLine18[0];
+  var _quill$getLine17 = this.quill.getLine(range.index + 1),
+      _quill$getLine18 = _slicedToArray(_quill$getLine17, 1),
+      next = _quill$getLine18[0];
 
-    if (next) {
-      var curFormats = line.formats();
-      var nextFormats = this.quill.getFormat(range.index, 1);
-      formats = _op2.default.attributes.diff(curFormats, nextFormats) || {};
-      nextLength = next.length();
-    }
+  if (next) {
+    var curFormats = line.formats();
+    var nextFormats = this.quill.getFormat(range.index, 1);
+    formats = _op2.default.attributes.diff(curFormats, nextFormats) || {};
+  }
+  if (isEmptyLeaf) {
+    // Unset the empty format
+    this.quill.getLeaf(range.index)[0].parent.remove();
+    this.quill.setSelection(range.index);
   }
   this.quill.deleteText(range.index, length, _quill2.default.sources.USER);
-  if (Object.keys(formats).length > 0) {
-    this.quill.formatLine(range.index + nextLength - 1, length, formats, _quill2.default.sources.USER);
+  if (!isEmptyLeaf) {
+    for (var key in formats) {
+      if (Object.prototype.hasOwnProperty.call(formats, key)) {
+        this.quill.format(key, formats[key]);
+      }
+    }
   }
 }
 
