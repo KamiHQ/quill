@@ -368,19 +368,33 @@ function handleDelete(range, context) {
   let length = /^[\uD800-\uDBFF][\uDC00-\uDFFF]/.test(context.suffix) ? 2 : 1;
   if (range.index >= this.quill.getLength() - length) return;
   let formats = {}, nextLength = 0;
+  // Check that the current blot is not empty
+  var leaf = this.quill.getLeaf(range.index);
+  var isEmptyLeaf = (leaf[1] === 0) && (leaf[0].constructor.name === "Cursor");
   let [line, ] = this.quill.getLine(range.index);
-  if (context.offset >= line.length() - 1) {
-    let [next, ] = this.quill.getLine(range.index + 1);
-    if (next) {
-      let curFormats = line.formats();
-      let nextFormats = this.quill.getFormat(range.index, 1);
-      formats = DeltaOp.attributes.diff(curFormats, nextFormats) || {};
-      nextLength = next.length();
-    }
+
+  let [next, ] = this.quill.getLine(range.index + 1);
+  if (next) {
+    let curFormats = line.formats();
+    let nextFormats = this.quill.getFormat(range.index, 1);
+    formats = DeltaOp.attributes.diff(curFormats, nextFormats) || {};
+    nextLength = next.length();
   }
+
+  if (isEmptyLeaf) {
+    // Unset the empty format
+    this.quill.getLeaf(range.index)[0].parent.remove();
+    this.quill.setSelection(range.index);
+  }
+
   this.quill.deleteText(range.index, length, Quill.sources.USER);
-  if (Object.keys(formats).length > 0) {
-    this.quill.formatLine(range.index + nextLength - 1, length, formats, Quill.sources.USER);
+  
+  if (!isEmptyLeaf) {
+    for (var key in formats) {
+      if (Object.prototype.hasOwnProperty.call(formats, key)) {
+        this.quill.format(key, formats[key]);
+      }
+    }
   }
 }
 
