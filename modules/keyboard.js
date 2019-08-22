@@ -335,7 +335,7 @@ function handleBackspace(range, context) {
   let formats = {};
   // Check that the current blot is not empty
   var leaf = this.quill.getLeaf(range.index);
-  var isEmptyLeaf = leaf[1] === 0;
+  var isEmptyLeaf = (leaf[1] === 0) && (leaf[0].constructor.name === "Cursor");
 
   let [prev, ] = this.quill.getLine(range.index - 1);
   if (prev != null && prev.length() > 1) {
