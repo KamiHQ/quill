@@ -26,6 +26,10 @@ class History extends Module {
 
   change(source, dest) {
     if (this.stack[source].length === 0) return;
+    var formats = {};
+    if (source === "undo") {
+      var formats = this.quill.getFormat();
+    }
     let delta = this.stack[source].pop();
     this.stack[dest].push(delta);
     this.lastRecorded = 0;
@@ -34,6 +38,15 @@ class History extends Module {
     this.ignoreChange = false;
     let index = getLastChangeIndex(delta[source]);
     this.quill.setSelection(index);
+    var currentFormats = this.quill.getFormat();
+    // Reset to previous Format if currently has no format
+    if (Object.keys(formats).length > 0 && Object.keys(currentFormats).length === 0) {
+      for (var key in formats) {
+        if (Object.prototype.hasOwnProperty.call(formats, key)) {
+          this.quill.format(key, formats[key]);
+        }
+      }
+    }
   }
 
   clear() {
