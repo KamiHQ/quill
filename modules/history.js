@@ -28,7 +28,7 @@ class History extends Module {
     if (this.stack[source].length === 0) return;
     var formats = {};
     if (source === "undo") {
-      var formats = this.quill.getFormat();
+      formats = this.quill.getFormat();
     }
     let delta = this.stack[source].pop();
     this.stack[dest].push(delta);
