@@ -394,16 +394,14 @@ function handleDelete(range, context) {
 }
 
 function handleDeleteRange(range) {
-  let lines = this.quill.getLines(range);
-  let formats = {};
-  if (lines.length > 1) {
-    let firstFormats = lines[0].formats();
-    let lastFormats = lines[lines.length - 1].formats();
-    formats = DeltaOp.attributes.diff(lastFormats, firstFormats) || {};
-  }
+  var formats = this.quill.getFormat(range.index);
   this.quill.deleteText(range, Quill.sources.USER);
   if (Object.keys(formats).length > 0) {
-    this.quill.formatLine(range.index, 1, formats, Quill.sources.USER);
+    for (var key in formats) {
+      if (Object.prototype.hasOwnProperty.call(formats, key)) {
+        this.quill.format(key, formats[key]);
+      }
+    }
   }
   this.quill.setSelection(range.index, Quill.sources.SILENT);
   this.quill.focus();
