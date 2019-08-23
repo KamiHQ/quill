@@ -186,8 +186,8 @@ Keyboard.DEFAULTS = {
     },
     'tab': {
       key: Keyboard.keys.TAB,
-      handler: function(range) {
-        this.quill.format('indent', '+1', _quill2.default.sources.USER);
+      handler: function() {
+        this.quill.format('indent', '+1', Quill.sources.USER);
       }
     },
     'list empty enter': {

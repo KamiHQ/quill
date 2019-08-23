@@ -4681,12 +4681,8 @@ Keyboard.DEFAULTS = {
     },
     'tab': {
       key: Keyboard.keys.TAB,
-      handler: function handler(range) {
-        this.quill.history.cutoff();
-        var delta = new _quillDelta2.default().retain(range.index).delete(range.length).insert('\t');
-        this.quill.updateContents(delta, _quill2.default.sources.USER);
-        this.quill.history.cutoff();
-        this.quill.setSelection(range.index + 1, _quill2.default.sources.SILENT);
+      handler: function handler() {
+        this.quill.format('indent', '+1', _quill2.default.sources.USER);
       }
     },
     'list empty enter': {
