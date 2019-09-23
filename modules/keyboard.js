@@ -186,8 +186,22 @@ Keyboard.DEFAULTS = {
     },
     'tab': {
       key: Keyboard.keys.TAB,
-      handler: function() {
-        this.quill.format('indent', '+1', Quill.sources.USER);
+      handler: function(range) {
+        var formats = this.quill.getFormat(range.index);
+        this.quill.history.cutoff();
+        let delta = new Delta().retain(range.index)
+        .delete(range.length)
+        .insert('\t');
+        this.quill.updateContents(delta, Quill.sources.USER);
+        this.quill.history.cutoff();
+        this.quill.setSelection(range.index + 1, Quill.sources.SILENT);
+        if (Object.keys(formats).length > 0) {
+          for (var key in formats) {
+            if (Object.prototype.hasOwnProperty.call(formats, key)) {
+              this.quill.format(key, formats[key]);
+            }
+          }
+        }
       }
     },
     'list empty enter': {
