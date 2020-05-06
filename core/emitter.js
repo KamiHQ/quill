@@ -51,7 +51,8 @@ Emitter.events = {
   SCROLL_OPTIMIZE      : 'scroll-optimize',
   SCROLL_UPDATE        : 'scroll-update',
   SELECTION_CHANGE     : 'selection-change',
-  TEXT_CHANGE          : 'text-change'
+  TEXT_CHANGE          : 'text-change',
+  EOF_FORMAT_CHANGE    : 'eof-format-change' // Kami: this event is used to update the toolbar on end of format changes
 };
 Emitter.sources = {
   API    : 'api',

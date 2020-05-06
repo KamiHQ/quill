@@ -46,6 +46,7 @@ class History extends Module {
           this.quill.format(key, formats[key]);
         }
       }
+      this.quill.emitter.emit(Quill.events.EOF_FORMAT_CHANGE, null, null, Quill.sources.API);
     }
   }
 

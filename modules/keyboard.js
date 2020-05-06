@@ -201,6 +201,7 @@ Keyboard.DEFAULTS = {
               this.quill.format(key, formats[key]);
             }
           }
+          this.quill.emitter.emit(Quill.events.EOF_FORMAT_CHANGE, null, null, Quill.sources.API);
         }
       }
     },
@@ -367,6 +368,7 @@ function handleBackspace(range, context) {
         this.quill.format(key, formats[key]);
       }
     }
+    this.quill.emitter.emit(Quill.events.EOF_FORMAT_CHANGE, null, null, Quill.sources.API);
   }
   this.quill.focus();
 }
@@ -398,6 +400,7 @@ function handleDelete(range, context) {
         this.quill.format(key, formats[key]);
       }
     }
+    this.quill.emitter.emit(Quill.events.EOF_FORMAT_CHANGE, null, null, Quill.sources.API);
   }
 }
 
@@ -410,6 +413,7 @@ function handleDeleteRange(range) {
         this.quill.format(key, formats[key]);
       }
     }
+    this.quill.emitter.emit(Quill.events.EOF_FORMAT_CHANGE, null, null, Quill.sources.API);
   }
   this.quill.setSelection(range.index, Quill.sources.SILENT);
   this.quill.focus();
@@ -436,6 +440,7 @@ function handleEnter(range, context) {
     if (name === 'link') return;
     this.quill.format(name, context.format[name], Quill.sources.USER);
   });
+  this.quill.emitter.emit(Quill.events.EOF_FORMAT_CHANGE, null, null, Quill.sources.API);
 }
 
 function makeCodeBlockHandler(indent) {
