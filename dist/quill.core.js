@@ -1972,7 +1972,8 @@ Emitter.events = {
   SCROLL_OPTIMIZE: 'scroll-optimize',
   SCROLL_UPDATE: 'scroll-update',
   SELECTION_CHANGE: 'selection-change',
-  TEXT_CHANGE: 'text-change'
+  TEXT_CHANGE: 'text-change',
+  EOF_FORMAT_CHANGE: 'eof-format-change' // Kami: this event is used to update the toolbar on end of format changes
 };
 Emitter.sources = {
   API: 'api',
@@ -4694,6 +4695,7 @@ Keyboard.DEFAULTS = {
               this.quill.format(key, formats[key]);
             }
           }
+          this.quill.emitter.emit(_quill2.default.events.EOF_FORMAT_CHANGE, null, null, _quill2.default.sources.API);
         }
       }
     },
@@ -4876,6 +4878,7 @@ function handleBackspace(range, context) {
         this.quill.format(key, formats[key]);
       }
     }
+    this.quill.emitter.emit(_quill2.default.events.EOF_FORMAT_CHANGE, null, null, _quill2.default.sources.API);
   }
   this.quill.focus();
 }
@@ -4914,6 +4917,7 @@ function handleDelete(range, context) {
         this.quill.format(key, formats[key]);
       }
     }
+    this.quill.emitter.emit(_quill2.default.events.EOF_FORMAT_CHANGE, null, null, _quill2.default.sources.API);
   }
 }
 
@@ -4926,6 +4930,7 @@ function handleDeleteRange(range) {
         this.quill.format(key, formats[key]);
       }
     }
+    this.quill.emitter.emit(_quill2.default.events.EOF_FORMAT_CHANGE, null, null, _quill2.default.sources.API);
   }
   this.quill.setSelection(range.index, _quill2.default.sources.SILENT);
   this.quill.focus();
@@ -4954,6 +4959,7 @@ function handleEnter(range, context) {
     if (name === 'link') return;
     _this3.quill.format(name, context.format[name], _quill2.default.sources.USER);
   });
+  this.quill.emitter.emit(_quill2.default.events.EOF_FORMAT_CHANGE, null, null, _quill2.default.sources.API);
 }
 
 function makeCodeBlockHandler(indent) {
@@ -6225,6 +6231,7 @@ var History = function (_Module) {
             this.quill.format(key, formats[key]);
           }
         }
+        this.quill.emitter.emit(_quill2.default.events.EOF_FORMAT_CHANGE, null, null, _quill2.default.sources.API);
       }
     }
   }, {
