@@ -357,8 +357,11 @@ function handleBackspace(range, context) {
   let length = /[\uD800-\uDBFF][\uDC00-\uDFFF]$/.test(context.prefix) ? 2 : 1;
 
   if (isEmptyLeaf) { // Unset the empty format
-    this.quill.getLeaf(range.index)[0].parent.remove();
-    this.quill.setSelection(range.index);
+    let leafParent = leaf[0].parent;
+    if (leafParent && leafParent.length() === 0) {
+      this.quill.getLeaf(range.index)[0].parent.remove();
+      this.quill.setSelection(range.index);
+    }
   }
   this.quill.deleteText(range.index-length, length, Quill.sources.USER);
 
@@ -388,10 +391,12 @@ function handleDelete(range, context) {
     let nextFormats = this.quill.getFormat(range.index, 1);
     formats = DeltaOp.attributes.diff(curFormats, nextFormats) || {};
   }
-  if (isEmptyLeaf) {
-    // Unset the empty format
-    this.quill.getLeaf(range.index)[0].parent.remove();
-    this.quill.setSelection(range.index);
+  if (isEmptyLeaf) { // Unset the empty format
+    let leafParent = leaf[0].parent;
+    if (leafParent && leafParent.length() === 0) {
+      this.quill.getLeaf(range.index)[0].parent.remove();
+      this.quill.setSelection(range.index);
+    }
   }
   this.quill.deleteText(range.index, length, Quill.sources.USER);
   if (!isEmptyLeaf) {
