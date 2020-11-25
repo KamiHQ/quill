@@ -4867,8 +4867,11 @@ function handleBackspace(range, context) {
 
   if (isEmptyLeaf) {
     // Unset the empty format
-    this.quill.getLeaf(range.index)[0].parent.remove();
-    this.quill.setSelection(range.index);
+    var leafParent = leaf[0].parent;
+    if (leafParent && leafParent.length() === 0) {
+      this.quill.getLeaf(range.index)[0].parent.remove();
+      this.quill.setSelection(range.index);
+    }
   }
   this.quill.deleteText(range.index - length, length, _quill2.default.sources.USER);
 
@@ -4907,8 +4910,11 @@ function handleDelete(range, context) {
   }
   if (isEmptyLeaf) {
     // Unset the empty format
-    this.quill.getLeaf(range.index)[0].parent.remove();
-    this.quill.setSelection(range.index);
+    var leafParent = leaf[0].parent;
+    if (leafParent && leafParent.length() === 0) {
+      this.quill.getLeaf(range.index)[0].parent.remove();
+      this.quill.setSelection(range.index);
+    }
   }
   this.quill.deleteText(range.index, length, _quill2.default.sources.USER);
   if (!isEmptyLeaf) {
